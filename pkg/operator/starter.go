@@ -191,6 +191,23 @@ func RunOperator(ctx context.Context, controllerConfig *controllercmd.Controller
 		func() bool {
 			return false
 		},
+	).WithConditionalStaticResourcesController(
+		"GCPPDDriverOldControllerPrivilegedBindingRemoval",
+		kubeClient,
+		dynamicClient,
+		kubeInformersForNamespaces,
+		assets.ReadFile,
+		[]string{
+			"rbac/old_controller_privileged_binding.yaml",
+		},
+		// Never create.
+		func() bool {
+			return false
+		},
+		// Always delete.
+		func() bool {
+			return true
+		},
 	).WithCSIConfigObserverController(
 		"GCPPDDriverCSIConfigObserverController",
 		configInformers,
